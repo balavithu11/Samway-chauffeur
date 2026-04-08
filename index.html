@@ -12,7 +12,6 @@
   :root {
     --bg: #0a0a0f;
     --surface: #13131a;
-    --surface2: #1c1c26;
     --border: rgba(255,255,255,0.08);
     --border-active: rgba(255,255,255,0.2);
     --accent: #4f8ef7;
@@ -27,214 +26,99 @@
     --radius: 16px;
     --radius-sm: 10px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
+    min-height: 100%; background: var(--bg); color: var(--text);
     font-family: -apple-system, 'SF Pro Text', sans-serif;
     -webkit-font-smoothing: antialiased;
-    overscroll-behavior: none;
   }
-
   .app {
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px);
-    max-width: 480px;
-    margin: 0 auto;
+    min-height: 100dvh; display: flex; flex-direction: column;
+    padding: max(env(safe-area-inset-top), 24px) 20px max(env(safe-area-inset-bottom), 24px);
+    max-width: 480px; margin: 0 auto;
   }
-
-  .header {
-    padding-top: 16px;
-    margin-bottom: 32px;
-  }
-
-  .logo-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-
+  .header { margin-bottom: 32px; }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
   .logo-badge {
-    width: 36px;
-    height: 36px;
-    background: var(--accent);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: -1px;
-    flex-shrink: 0;
-  }
-
-  .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text);
-  }
-
-  .logo-sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-left: 46px;
-  }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-  }
-
-  /* Radio cards */
-  .drivers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-
-  .driver-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .driver-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--accent-dim);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .driver-card.selected {
-    border-color: var(--accent);
-  }
-  .driver-card.selected::before { opacity: 1; }
-
-  .driver-card:active { transform: scale(0.98); }
-
-  .check-circle {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border-active);
-    background: transparent;
-    flex-shrink: 0;
+    width: 36px; height: 36px; background: var(--accent); border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.2s, background 0.2s;
-    position: relative; z-index: 1;
+    font-size: 15px; font-weight: 700; color: white; flex-shrink: 0;
   }
-
-  .driver-card.selected .check-circle {
-    border-color: var(--accent);
-    background: var(--accent);
+  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 13px; color: var(--text-muted); margin-left: 46px; }
+  .section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
   }
-
+  .drivers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .driver-card {
+    display: flex; align-items: center; gap: 14px; padding: 16px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); cursor: pointer;
+    transition: border-color 0.15s; position: relative; overflow: hidden;
+  }
+  .driver-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--accent-dim); opacity: 0; transition: opacity 0.15s;
+  }
+  .driver-card.selected { border-color: var(--accent); }
+  .driver-card.selected::before { opacity: 1; }
+  .driver-card:active { transform: scale(0.985); }
+  .check-circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid var(--border-active); background: transparent;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.15s, background 0.15s; position: relative; z-index: 1;
+  }
+  .driver-card.selected .check-circle { border-color: var(--accent); background: var(--accent); }
   .check-circle svg { display: none; }
   .driver-card.selected .check-circle svg { display: block; }
-
   .driver-details { flex: 1; position: relative; z-index: 1; }
-  .driver-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.2px;
-    margin-bottom: 2px;
-  }
-  .driver-phone {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Drop zone */
+  .driver-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .driver-phone { font-size: 13px; color: var(--text-muted); }
   .drop-zone {
-    border: 1.5px dashed var(--border-active);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    background: var(--surface);
-    position: relative;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    margin-bottom: 28px;
+    border: 1.5px dashed var(--border-active); border-radius: var(--radius);
+    padding: 28px 20px; text-align: center; background: var(--surface);
+    position: relative; cursor: pointer; margin-bottom: 14px;
   }
   .drop-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; font-size: 0;
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
   }
-  .drop-zone.has-file {
-    border-color: var(--success);
-    background: var(--success-dim);
-  }
-  .drop-icon {
-    font-size: 32px;
-    margin-bottom: 8px;
-    line-height: 1;
-  }
+  .drop-zone.has-file { border-color: var(--success); border-style: solid; }
+  .drop-icon { font-size: 30px; margin-bottom: 8px; line-height: 1; }
   .drop-main { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .drop-hint { font-size: 13px; color: var(--text-muted); }
-  .drop-zone.has-file .drop-icon-default { display: none; }
-  .drop-zone.has-file .drop-icon-done { display: block; }
-  .drop-icon-done { display: none; color: var(--success); }
-
-  /* CTA button */
   .btn-cta {
-    width: 100%;
-    padding: 17px;
-    border-radius: var(--radius);
-    border: none;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    cursor: pointer;
-    background: var(--accent);
-    color: white;
-    transition: opacity 0.2s, transform 0.15s;
-    margin-bottom: 14px;
+    width: 100%; padding: 17px; border-radius: var(--radius); border: none;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    background: var(--accent); color: white;
+    transition: opacity 0.15s, transform 0.1s; margin-bottom: 14px;
   }
   .btn-cta:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-cta:not(:disabled):active { transform: scale(0.97); opacity: 0.9; }
-
-  /* Status */
+  .btn-cta:not(:disabled):active { transform: scale(0.97); }
   .status {
-    padding: 14px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    display: none;
-    align-items: center;
-    gap: 10px;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; display: none; margin-bottom: 12px;
   }
-  .status.show { display: flex; }
-  .status.success { background: var(--success-dim); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+  .status.show { display: block; }
   .status.error { background: var(--error-dim); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-
-  .spacer { flex: 1; }
-
-  .footer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-dim);
-    padding-top: 16px;
+  .status.info { background: rgba(79,142,247,0.1); color: var(--accent); border: 1px solid rgba(79,142,247,0.25); }
+  /* Bouton vert — lien <a> natif, seule méthode fiable iOS */
+  .pdf-open-btn {
+    display: none; width: 100%; padding: 17px;
+    border-radius: var(--radius); background: var(--success);
+    color: #052e18; font-size: 16px; font-weight: 700;
+    text-align: center; text-decoration: none;
+    margin-bottom: 8px;
   }
+  .pdf-open-btn.show { display: block; }
+  .pdf-open-hint {
+    display: none; font-size: 12px; color: var(--text-muted);
+    text-align: center; margin-bottom: 16px; line-height: 1.5;
+  }
+  .pdf-open-hint.show { display: block; }
+  .spacer { flex: 1; }
+  .footer { text-align: center; font-size: 12px; color: var(--text-dim); padding-top: 16px; }
 </style>
 </head>
 <body>
@@ -279,125 +163,111 @@
 
   <p class="section-title">PDF à modifier</p>
   <div class="drop-zone" id="dropZone">
-    <input type="file" accept=".pdf" id="fileInput" onchange="handleFile(this.files[0])">
-    <div class="drop-icon drop-icon-default">📄</div>
-    <div class="drop-icon drop-icon-done" style="font-size:32px;">✅</div>
+    <input type="file" accept="*/*" id="fileInput" onchange="handleFile(this.files[0])">
+    <div class="drop-icon" id="dropIcon">📄</div>
     <div class="drop-main" id="dropMain">Appuie pour choisir le PDF</div>
     <div class="drop-hint" id="dropHint">Depuis Fichiers, Gmail ou Drive</div>
   </div>
 
   <button class="btn-cta" id="btnProcess" disabled onclick="processPDF()">
-    Modifier et télécharger
+    Modifier le PDF
   </button>
 
-  <div class="status" id="status">
-    <div class="status-dot"></div>
-    <span id="statusMsg"></span>
+  <div class="status" id="status"></div>
+
+  <a class="pdf-open-btn" id="pdfOpenBtn" href="#" target="_blank">
+    📂 &nbsp;Ouvrir le PDF modifié
+  </a>
+  <div class="pdf-open-hint" id="pdfOpenHint">
+    Appuie sur le bouton vert ci-dessus<br>
+    puis ↑ Partager → "Enregistrer dans Fichiers" ou envoie directement
   </div>
 
   <div class="spacer"></div>
-  <div class="footer">Traitement 100% local · aucune donnée envoyée</div>
+  <div class="footer">Traitement 100 % local · aucune donnée envoyée</div>
 
 </div>
-
 <script>
 const drivers = {
   vithurshan: 'Vithurshan Balasubramaniam (0766050156)',
   banujan:    'Banujan Balasubramaniam (0000000000)'
 };
-
 let selectedDriver = null;
 let pdfFile = null;
+let lastURL = null;
 
 function selectDriver(id) {
   selectedDriver = id;
   document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('card-' + id).classList.add('selected');
-  updateBtn();
-  hideStatus();
+  updateBtn(); hidePdf(); hideStatus();
 }
 
 function handleFile(file) {
-  if (!file || file.type !== 'application/pdf') {
-    showStatus('error', 'Sélectionne un fichier PDF valide.'); return;
-  }
+  if (!file) return;
   pdfFile = file;
-  const dz = document.getElementById('dropZone');
-  dz.classList.add('has-file');
+  document.getElementById('dropZone').classList.add('has-file');
+  document.getElementById('dropIcon').textContent = '✅';
   document.getElementById('dropMain').textContent = file.name;
   document.getElementById('dropHint').textContent = Math.round(file.size / 1024) + ' Ko';
-  updateBtn(); hideStatus();
+  updateBtn(); hidePdf(); hideStatus();
 }
 
 function updateBtn() {
   document.getElementById('btnProcess').disabled = !(selectedDriver && pdfFile);
 }
-
 function showStatus(type, msg) {
   const s = document.getElementById('status');
   s.className = 'status show ' + type;
-  document.getElementById('statusMsg').textContent = msg;
+  s.textContent = msg;
 }
-function hideStatus() {
-  const s = document.getElementById('status');
-  s.className = 'status';
+function hideStatus() { document.getElementById('status').className = 'status'; }
+function hidePdf() {
+  document.getElementById('pdfOpenBtn').classList.remove('show');
+  document.getElementById('pdfOpenHint').classList.remove('show');
 }
 
 async function processPDF() {
   if (!pdfFile || !selectedDriver) return;
   const btn = document.getElementById('btnProcess');
-  btn.disabled = true;
-  btn.textContent = 'Traitement…';
-  hideStatus();
+  btn.disabled = true; btn.textContent = 'Traitement…';
+  hideStatus(); hidePdf();
 
   try {
     const { PDFDocument, rgb, StandardFonts } = PDFLib;
-    const arrayBuffer = await pdfFile.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const ab = await pdfFile.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(ab);
     const page = pdfDoc.getPages()[0];
     const { height } = page.getSize();
-
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const newText = drivers[selectedDriver];
 
-    // Couvrir l'ancien texte
     page.drawRectangle({ x: 349, y: height - 199.5, width: 230, height: 13.5, color: rgb(1,1,1) });
+    page.drawText(drivers[selectedDriver], { x: 349, y: height - 198, size: 10.5, font, color: rgb(0,0,0) });
 
-    // Écrire le nouveau texte
-    page.drawText(newText, {
-      x: 349,
-      y: height - 198,
-      size: 10.5,
-      font,
-      color: rgb(0, 0, 0),
-    });
+    const bytes = await pdfDoc.save();
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    if (lastURL) URL.revokeObjectURL(lastURL);
+    lastURL = URL.createObjectURL(blob);
 
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-
-    // iOS Safari : ouvre le PDF dans un nouvel onglet → partage natif dispo
+    const fname = pdfFile.name.replace(/\.pdf$/i, '') + '_modifie.pdf';
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     if (isIOS) {
-      window.open(url, '_blank');
+      const link = document.getElementById('pdfOpenBtn');
+      link.href = lastURL;
+      link.classList.add('show');
+      document.getElementById('pdfOpenHint').classList.add('show');
+      showStatus('info', '✓ Modifié — appuie sur le bouton vert');
     } else {
       const a = document.createElement('a');
-      a.href = url;
-      a.download = pdfFile.name.replace(/\.pdf$/i, '') + '_modifie.pdf';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      a.href = lastURL; a.download = fname;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      showStatus('info', '✓ PDF téléchargé avec succès !');
     }
-
-    const isIOS2 = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    showStatus('success', isIOS2 ? 'PDF ouvert — appuie sur ↑ pour enregistrer ou partager !' : 'PDF modifié téléchargé avec succès !');
-  } catch (err) {
+  } catch(err) {
     showStatus('error', 'Erreur : ' + err.message);
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Modifier et télécharger';
-    updateBtn();
+    btn.disabled = false; btn.textContent = 'Modifier le PDF'; updateBtn();
   }
 }
 </script>
