@@ -13,16 +13,14 @@
     --bg: #0a0a0f;
     --surface: #13131a;
     --border: rgba(255,255,255,0.08);
-    --border-active: rgba(255,255,255,0.2);
+    --border-active: rgba(255,255,255,0.22);
     --accent: #4f8ef7;
     --accent-dim: rgba(79,142,247,0.15);
     --text: #f0f0f5;
     --text-muted: #7a7a8c;
     --text-dim: #4a4a5c;
     --success: #34d399;
-    --success-dim: rgba(52,211,153,0.12);
     --error: #f87171;
-    --error-dim: rgba(248,113,113,0.12);
     --radius: 16px;
     --radius-sm: 10px;
   }
@@ -46,77 +44,97 @@
   }
   .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
   .logo-sub { font-size: 13px; color: var(--text-muted); margin-left: 46px; }
+
   .section-title {
     font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
   }
+
+  /* Driver cards */
   .drivers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
   .driver-card {
     display: flex; align-items: center; gap: 14px; padding: 16px;
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: var(--radius); cursor: pointer;
-    transition: border-color 0.15s; position: relative; overflow: hidden;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative; overflow: hidden;
+    -webkit-user-select: none; user-select: none;
   }
-  .driver-card::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--accent-dim); opacity: 0; transition: opacity 0.15s;
-  }
-  .driver-card.selected { border-color: var(--accent); }
-  .driver-card.selected::before { opacity: 1; }
-  .driver-card:active { transform: scale(0.985); }
+  .driver-card.selected { border-color: var(--accent); background: rgba(79,142,247,0.1); }
+  .driver-card:active { opacity: 0.8; }
+
   .check-circle {
     width: 22px; height: 22px; border-radius: 50%;
     border: 1.5px solid var(--border-active); background: transparent;
     flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.15s, background 0.15s; position: relative; z-index: 1;
+    transition: border-color 0.15s, background 0.15s;
   }
   .driver-card.selected .check-circle { border-color: var(--accent); background: var(--accent); }
-  .check-circle svg { display: none; }
-  .driver-card.selected .check-circle svg { display: block; }
-  .driver-details { flex: 1; position: relative; z-index: 1; }
+  .checkmark { display: none; }
+  .driver-card.selected .checkmark { display: block; }
+
   .driver-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .driver-phone { font-size: 13px; color: var(--text-muted); }
-  .drop-zone {
-    border: 1.5px dashed var(--border-active); border-radius: var(--radius);
-    padding: 28px 20px; text-align: center; background: var(--surface);
-    position: relative; cursor: pointer; margin-bottom: 14px;
+
+  /* File zone */
+  .file-zone {
+    position: relative; border: 1.5px dashed var(--border-active);
+    border-radius: var(--radius); padding: 28px 20px;
+    text-align: center; background: var(--surface);
+    cursor: pointer; margin-bottom: 14px;
+    transition: border-color 0.15s;
   }
-  .drop-zone input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  .file-zone.ok { border-color: var(--success); border-style: solid; }
+  .file-zone input {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; font-size: 0;
   }
-  .drop-zone.has-file { border-color: var(--success); border-style: solid; }
-  .drop-icon { font-size: 30px; margin-bottom: 8px; line-height: 1; }
-  .drop-main { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .drop-hint { font-size: 13px; color: var(--text-muted); }
-  .btn-cta {
+  .file-icon { font-size: 30px; margin-bottom: 8px; line-height: 1; display: block; }
+  .file-main { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .file-hint { font-size: 13px; color: var(--text-muted); }
+
+  /* Button */
+  .btn {
     width: 100%; padding: 17px; border-radius: var(--radius); border: none;
     font-size: 16px; font-weight: 600; cursor: pointer;
     background: var(--accent); color: white;
     transition: opacity 0.15s, transform 0.1s; margin-bottom: 14px;
   }
-  .btn-cta:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-cta:not(:disabled):active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn:not(:disabled):active { transform: scale(0.97); }
+
+  /* Status */
   .status {
     padding: 12px 14px; border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 500; display: none; margin-bottom: 12px;
+    font-size: 14px; font-weight: 500; margin-bottom: 12px; display: none;
   }
   .status.show { display: block; }
-  .status.error { background: var(--error-dim); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
-  .status.info { background: rgba(79,142,247,0.1); color: var(--accent); border: 1px solid rgba(79,142,247,0.25); }
-  /* Bouton vert — lien <a> natif, seule méthode fiable iOS */
-  .pdf-open-btn {
-    display: none; width: 100%; padding: 17px;
-    border-radius: var(--radius); background: var(--success);
-    color: #052e18; font-size: 16px; font-weight: 700;
-    text-align: center; text-decoration: none;
-    margin-bottom: 8px;
+  .status.ok { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+  .status.err { background: rgba(248,113,113,0.12); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
+
+  /* PDF preview iframe */
+  .pdf-frame {
+    display: none; width: 100%; height: 65vh;
+    border-radius: var(--radius); border: 1.5px solid var(--success);
+    background: white; margin-bottom: 8px;
   }
-  .pdf-open-btn.show { display: block; }
-  .pdf-open-hint {
+  .pdf-frame.show { display: block; }
+  .pdf-hint {
     display: none; font-size: 12px; color: var(--text-muted);
-    text-align: center; margin-bottom: 16px; line-height: 1.5;
+    text-align: center; margin-bottom: 16px; line-height: 1.6;
   }
-  .pdf-open-hint.show { display: block; }
+  .pdf-hint.show { display: block; }
+
+  /* PC download link */
+  .dl-link {
+    display: none; width: 100%; padding: 14px;
+    border-radius: var(--radius); background: rgba(52,211,153,0.12);
+    color: var(--success); border: 1px solid rgba(52,211,153,0.3);
+    font-size: 15px; font-weight: 600; text-align: center;
+    text-decoration: none; margin-bottom: 12px;
+  }
+  .dl-link.show { display: block; }
+
   .spacer { flex: 1; }
   .footer { text-align: center; font-size: 12px; color: var(--text-dim); padding-top: 16px; }
 </style>
@@ -135,25 +153,25 @@
   <p class="section-title">Chauffeur</p>
   <div class="drivers">
 
-    <div class="driver-card" id="card-vithurshan" onclick="selectDriver('vithurshan')">
+    <div class="driver-card" id="card-v" onclick="selectDriver('v')">
       <div class="check-circle">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <svg class="checkmark" width="12" height="12" viewBox="0 0 12 12" fill="none">
           <path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="driver-details">
+      <div>
         <div class="driver-name">Vithurshan BALASUBRAMANIAM</div>
         <div class="driver-phone">07 66 05 01 56</div>
       </div>
     </div>
 
-    <div class="driver-card" id="card-banujan" onclick="selectDriver('banujan')">
+    <div class="driver-card" id="card-b" onclick="selectDriver('b')">
       <div class="check-circle">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <svg class="checkmark" width="12" height="12" viewBox="0 0 12 12" fill="none">
           <path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="driver-details">
+      <div>
         <div class="driver-name">Banujan BALASUBRAMANIAM</div>
         <div class="driver-phone">06 33 55 50 41</div>
       </div>
@@ -162,132 +180,156 @@
   </div>
 
   <p class="section-title">PDF à modifier</p>
-  <div class="drop-zone" id="dropZone">
+  <div class="file-zone" id="fileZone">
     <input type="file" accept="*/*" id="fileInput" onchange="handleFile(this.files[0])">
-    <div class="drop-icon" id="dropIcon">📄</div>
-    <div class="drop-main" id="dropMain">Appuie pour choisir le PDF</div>
-    <div class="drop-hint" id="dropHint">Depuis Fichiers, Gmail ou Drive</div>
+    <span class="file-icon" id="fileIcon">📄</span>
+    <div class="file-main" id="fileMain">Appuie pour choisir le PDF</div>
+    <div class="file-hint" id="fileHint">Depuis Fichiers, Gmail ou Drive</div>
   </div>
 
-  <button class="btn-cta" id="btnProcess" disabled onclick="processPDF()">
-    Modifier le PDF
-  </button>
+  <button class="btn" id="btn" disabled onclick="process()">Modifier le PDF</button>
 
   <div class="status" id="status"></div>
 
-  <a class="pdf-open-btn" id="pdfOpenBtn" href="#" target="_blank">
-    📂 &nbsp;Ouvrir le PDF modifié
-  </a>
-  <div class="pdf-open-hint" id="pdfOpenHint">
-    Appuie sur le bouton vert ci-dessus<br>
-    puis ↑ Partager → "Enregistrer dans Fichiers" ou envoie directement
+  <!-- iOS : aperçu iframe -->
+  <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
+  <div class="pdf-hint" id="pdfHint">
+    Appuie sur le PDF ci-dessus → ↑ Partager<br>→ "Enregistrer dans Fichiers" ou envoie directement
   </div>
+
+  <!-- PC : lien téléchargement -->
+  <a class="dl-link" id="dlLink" href="#" download="">⬇ Télécharger le PDF modifié</a>
 
   <div class="spacer"></div>
   <div class="footer">Traitement 100 % local · aucune donnée envoyée</div>
 
 </div>
 <script>
-const drivers = {
-  vithurshan: 'Vithurshan Balasubramaniam (0766050156)',
-  banujan:    'Banujan Balasubramaniam (0633555041)'
+const DRIVERS = {
+  v: { text: 'Vithurshan Balasubramaniam (0766050156)', prenom: 'Vithurshan' },
+  b: { text: 'Banujan Balasubramaniam (0633555041)',    prenom: 'Banujan' }
 };
-let selectedDriver = null;
-let pdfFile = null;
-let lastURL = null;
+const MOIS = {
+  jan:'01', fev:'02', mar:'03', avr:'04', mai:'05', jui:'06',
+  jul:'07', aou:'08', sep:'09', oct:'10', nov:'11', dec:'12'
+};
+
+let driver = null, file = null, lastURL = null;
 
 function selectDriver(id) {
-  selectedDriver = id;
+  driver = id;
   document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('card-' + id).classList.add('selected');
-  updateBtn(); hidePdf(); hideStatus();
+  updateBtn(); reset();
 }
 
-function handleFile(file) {
-  if (!file) return;
-  pdfFile = file;
-  document.getElementById('dropZone').classList.add('has-file');
-  document.getElementById('dropIcon').textContent = '✅';
-  document.getElementById('dropMain').textContent = file.name;
-  document.getElementById('dropHint').textContent = Math.round(file.size / 1024) + ' Ko';
-  updateBtn(); hidePdf(); hideStatus();
+function handleFile(f) {
+  if (!f) return;
+  file = f;
+  document.getElementById('fileZone').classList.add('ok');
+  document.getElementById('fileIcon').textContent = '✅';
+  document.getElementById('fileMain').textContent = f.name;
+  document.getElementById('fileHint').textContent = Math.round(f.size / 1024) + ' Ko';
+  updateBtn(); reset();
 }
 
 function updateBtn() {
-  document.getElementById('btnProcess').disabled = !(selectedDriver && pdfFile);
+  document.getElementById('btn').disabled = !(driver && file);
 }
+
+function reset() {
+  document.getElementById('status').className = 'status';
+  document.getElementById('pdfFrame').className = 'pdf-frame';
+  document.getElementById('pdfFrame').src = '';
+  document.getElementById('pdfHint').className = 'pdf-hint';
+  document.getElementById('dlLink').className = 'dl-link';
+}
+
 function showStatus(type, msg) {
   const s = document.getElementById('status');
   s.className = 'status show ' + type;
   s.textContent = msg;
 }
-function hideStatus() { document.getElementById('status').className = 'status'; }
-function hidePdf() {
-  document.getElementById('pdfOpenBtn').classList.remove('show');
-  document.getElementById('pdfOpenHint').classList.remove('show');
+
+function buildFilename(arrayBuf, prenom) {
+  // Extraire les chaînes de texte du PDF binaire
+  const bytes = new Uint8Array(arrayBuf);
+  let raw = '';
+  for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+
+  // Parser les strings entre parenthèses (format PDF)
+  let strings = [], cur = '', depth = 0;
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === '(' && raw[i-1] !== '\\') { depth++; if (depth === 1) cur = ''; }
+    else if (raw[i] === ')' && raw[i-1] !== '\\' && depth > 0) {
+      depth--; if (depth === 0) { strings.push(cur); cur = ''; }
+      else cur += raw[i];
+    } else if (depth > 0) cur += raw[i];
+  }
+  const allText = strings.join(' ');
+
+  // Date : "jeudi 9 avril 2026"
+  let datePart = '';
+  const dm = allText.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
+  if (dm) {
+    const jour = dm[2].padStart(2, '0');
+    const moisRaw = dm[3].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').slice(0, 3);
+    const mois = MOIS[moisRaw] || '??';
+    datePart = jour + '/' + mois + '/' + dm[4].slice(2);
+  }
+
+  // Heure prise en charge = 2ème HH:MM (le 1er est "18:48" création dossier)
+  let heurePart = '';
+  const heures = [...allText.matchAll(/(\d{2}):(\d{2})/g)];
+  const valides = heures.filter(h => parseInt(h[1]) <= 23);
+  const idx = valides.length >= 2 ? 1 : 0;
+  if (valides.length > 0) heurePart = valides[idx][1] + 'h' + valides[idx][2];
+
+  if (datePart && heurePart) return datePart + ' - ' + heurePart + ' - ' + prenom + '.pdf';
+  return 'mission - ' + prenom + '.pdf';
 }
 
-async function processPDF() {
-  if (!pdfFile || !selectedDriver) return;
-  const btn = document.getElementById('btnProcess');
+async function process() {
+  if (!file || !driver) return;
+  const btn = document.getElementById('btn');
   btn.disabled = true; btn.textContent = 'Traitement…';
-  hideStatus(); hidePdf();
+  reset();
 
   try {
     const { PDFDocument, rgb, StandardFonts } = PDFLib;
-    const ab = await pdfFile.arrayBuffer();
+    const ab = await file.arrayBuffer();
     const pdfDoc = await PDFDocument.load(ab);
     const page = pdfDoc.getPages()[0];
     const { height } = page.getSize();
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
+    // Couvrir ancien nom chauffeur + écrire nouveau
     page.drawRectangle({ x: 349, y: height - 199.5, width: 230, height: 13.5, color: rgb(1,1,1) });
-    page.drawText(drivers[selectedDriver], { x: 349, y: height - 198, size: 10.5, font, color: rgb(0,0,0) });
+    page.drawText(DRIVERS[driver].text, { x: 349, y: height - 198, size: 10.5, font, color: rgb(0,0,0) });
 
     const bytes = await pdfDoc.save();
     const blob = new Blob([bytes], { type: 'application/pdf' });
     if (lastURL) URL.revokeObjectURL(lastURL);
     lastURL = URL.createObjectURL(blob);
 
-    // Extraire date et heure depuis le texte brut du PDF
-    const moisMap2 = {
-      'jan':'01','fev':'02','mar':'03','avr':'04','mai':'05',
-      'jui':'06','jul':'07','aou':'08','sep':'09','oct':'10','nov':'11','dec':'12'
-    };
-    let datePart = '', heurePart = '';
-    try {
-      const latin1 = new TextDecoder('windows-1252').decode(ab);
-      const dm2 = latin1.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
-      if (dm2) {
-        const jour = dm2[2].padStart(2,'0');
-        const moisRaw = dm2[3].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').substring(0,3);
-        const mois = moisMap2[moisRaw] || '??';
-        datePart = jour + '/' + mois + '/' + dm2[4].slice(2);
-      }
-      const heureAll = [...latin1.matchAll(/(\d{2}):(\d{2})/g)];
-      if (heureAll.length > 0) heurePart = heureAll[0][1] + 'h' + heureAll[0][2];
-    } catch(e) {}
-
-    const prenom = selectedDriver === 'vithurshan' ? 'Vithurshan' : 'Banujan';
-    const fname = (datePart && heurePart)
-      ? `${datePart} - ${heurePart} - ${prenom}.pdf`
-      : `mission - ${prenom}.pdf`;
+    const fname = buildFilename(ab, DRIVERS[driver].prenom);
+    showStatus('ok', '✓ ' + fname);
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     if (isIOS) {
-      const link = document.getElementById('pdfOpenBtn');
-      link.href = lastURL;
-      link.classList.add('show');
-      document.getElementById('pdfOpenHint').classList.add('show');
-      showStatus('info', '✓ ' + fname);
+      const frame = document.getElementById('pdfFrame');
+      frame.src = lastURL;
+      frame.className = 'pdf-frame show';
+      document.getElementById('pdfHint').className = 'pdf-hint show';
     } else {
-      const a = document.createElement('a');
-      a.href = lastURL; a.download = fname;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      showStatus('info', '✓ ' + fname);
+      const a = document.getElementById('dlLink');
+      a.href = lastURL;
+      a.download = fname;
+      a.className = 'dl-link show';
     }
-  } catch(err) {
-    showStatus('error', 'Erreur : ' + err.message);
+
+  } catch(e) {
+    showStatus('err', 'Erreur : ' + e.message);
   } finally {
     btn.disabled = false; btn.textContent = 'Modifier le PDF'; updateBtn();
   }
