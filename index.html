@@ -249,20 +249,42 @@ async function processPDF() {
     if (lastURL) URL.revokeObjectURL(lastURL);
     lastURL = URL.createObjectURL(blob);
 
-    const fname = pdfFile.name.replace(/\.pdf$/i, '') + '_modifie.pdf';
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // Extraire date et heure depuis le texte brut du PDF
+    const moisMap2 = {
+      'jan':'01','fev':'02','mar':'03','avr':'04','mai':'05',
+      'jui':'06','jul':'07','aou':'08','sep':'09','oct':'10','nov':'11','dec':'12'
+    };
+    let datePart = '', heurePart = '';
+    try {
+      const latin1 = new TextDecoder('windows-1252').decode(ab);
+      const dm2 = latin1.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
+      if (dm2) {
+        const jour = dm2[2].padStart(2,'0');
+        const moisRaw = dm2[3].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').substring(0,3);
+        const mois = moisMap2[moisRaw] || '??';
+        datePart = jour + '/' + mois + '/' + dm2[4].slice(2);
+      }
+      const heureAll = [...latin1.matchAll(/(\d{2}):(\d{2})/g)];
+      if (heureAll.length > 0) heurePart = heureAll[0][1] + 'h' + heureAll[0][2];
+    } catch(e) {}
 
+    const prenom = selectedDriver === 'vithurshan' ? 'Vithurshan' : 'Banujan';
+    const fname = (datePart && heurePart)
+      ? `${datePart} - ${heurePart} - ${prenom}.pdf`
+      : `mission - ${prenom}.pdf`;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     if (isIOS) {
       const link = document.getElementById('pdfOpenBtn');
       link.href = lastURL;
       link.classList.add('show');
       document.getElementById('pdfOpenHint').classList.add('show');
-      showStatus('info', '✓ Modifié — appuie sur le bouton vert');
+      showStatus('info', '✓ ' + fname);
     } else {
       const a = document.createElement('a');
       a.href = lastURL; a.download = fname;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      showStatus('info', '✓ PDF téléchargé avec succès !');
+      showStatus('info', '✓ ' + fname);
     }
   } catch(err) {
     showStatus('error', 'Erreur : ' + err.message);
