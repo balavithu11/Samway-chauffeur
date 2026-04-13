@@ -7,141 +7,59 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Samway">
 <title>Samway — Chauffeur</title>
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --border: rgba(255,255,255,0.08);
-    --border-active: rgba(255,255,255,0.22);
-    --accent: #4f8ef7;
-    --accent-dim: rgba(79,142,247,0.15);
-    --text: #f0f0f5;
-    --text-muted: #7a7a8c;
-    --text-dim: #4a4a5c;
-    --success: #34d399;
-    --error: #f87171;
-    --radius: 16px;
-    --radius-sm: 10px;
+    --bg: #0a0a0f; --surface: #13131a;
+    --border: rgba(255,255,255,0.08); --border-active: rgba(255,255,255,0.22);
+    --accent: #4f8ef7; --text: #f0f0f5;
+    --text-muted: #7a7a8c; --text-dim: #4a4a5c;
+    --success: #34d399; --error: #f87171;
+    --radius: 16px; --radius-sm: 10px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    min-height: 100%; background: var(--bg); color: var(--text);
-    font-family: -apple-system, 'SF Pro Text', sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  .app {
-    min-height: 100dvh; display: flex; flex-direction: column;
-    padding: max(env(safe-area-inset-top), 24px) 20px max(env(safe-area-inset-bottom), 24px);
-    max-width: 480px; margin: 0 auto;
-  }
+  html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', sans-serif; -webkit-font-smoothing: antialiased; }
+  .app { min-height: 100dvh; display: flex; flex-direction: column; padding: max(env(safe-area-inset-top),24px) 20px max(env(safe-area-inset-bottom),24px); max-width: 480px; margin: 0 auto; }
   .header { margin-bottom: 32px; }
   .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-  .logo-badge {
-    width: 36px; height: 36px; background: var(--accent); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 700; color: white; flex-shrink: 0;
-  }
+  .logo-badge { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: white; flex-shrink: 0; }
   .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
   .logo-sub { font-size: 13px; color: var(--text-muted); margin-left: 46px; }
-
-  .section-title {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
-  }
-
-  /* Driver cards */
+  .section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
   .drivers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-  .driver-card {
-    display: flex; align-items: center; gap: 14px; padding: 16px;
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius); cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    position: relative; overflow: hidden;
-    -webkit-user-select: none; user-select: none;
-  }
+  .driver-card { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color 0.15s, background 0.15s; -webkit-user-select: none; user-select: none; }
   .driver-card.selected { border-color: var(--accent); background: rgba(79,142,247,0.1); }
-  .driver-card:active { opacity: 0.8; }
-
-  .check-circle {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 1.5px solid var(--border-active); background: transparent;
-    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.15s, background 0.15s;
-  }
+  .driver-card:active { opacity: 0.7; }
+  .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-active); background: transparent; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s, background 0.15s; }
   .driver-card.selected .check-circle { border-color: var(--accent); background: var(--accent); }
   .checkmark { display: none; }
   .driver-card.selected .checkmark { display: block; }
-
   .driver-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .driver-phone { font-size: 13px; color: var(--text-muted); }
-
-  /* File zone */
-  .file-zone {
-    position: relative; border: 1.5px dashed var(--border-active);
-    border-radius: var(--radius); padding: 28px 20px;
-    text-align: center; background: var(--surface);
-    cursor: pointer; margin-bottom: 14px;
-    transition: border-color 0.15s;
-  }
+  .file-zone { position: relative; border: 1.5px dashed var(--border-active); border-radius: var(--radius); padding: 28px 20px; text-align: center; background: var(--surface); cursor: pointer; margin-bottom: 14px; }
   .file-zone.ok { border-color: var(--success); border-style: solid; }
-  .file-zone input {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    opacity: 0; cursor: pointer; font-size: 0;
-  }
+  .file-zone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
   .file-icon { font-size: 30px; margin-bottom: 8px; line-height: 1; display: block; }
   .file-main { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .file-hint { font-size: 13px; color: var(--text-muted); }
-
-  /* Button */
-  .btn {
-    width: 100%; padding: 17px; border-radius: var(--radius); border: none;
-    font-size: 16px; font-weight: 600; cursor: pointer;
-    background: var(--accent); color: white;
-    transition: opacity 0.15s, transform 0.1s; margin-bottom: 14px;
-  }
+  .btn { width: 100%; padding: 17px; border-radius: var(--radius); border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--accent); color: white; transition: opacity 0.15s, transform 0.1s; margin-bottom: 14px; }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn:not(:disabled):active { transform: scale(0.97); }
-
-  /* Status */
-  .status {
-    padding: 12px 14px; border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 500; margin-bottom: 12px; display: none;
-  }
+  .status { padding: 12px 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; margin-bottom: 12px; display: none; }
   .status.show { display: block; }
-  .status.ok { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+  .status.ok  { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
   .status.err { background: rgba(248,113,113,0.12); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
-
-  /* PDF preview iframe */
-  .pdf-frame {
-    display: none; width: 100%; height: 65vh;
-    border-radius: var(--radius); border: 1.5px solid var(--success);
-    background: white; margin-bottom: 8px;
-  }
-  .pdf-frame.show { display: block; }
-  .pdf-hint {
-    display: none; font-size: 12px; color: var(--text-muted);
-    text-align: center; margin-bottom: 16px; line-height: 1.6;
-  }
-  .pdf-hint.show { display: block; }
-
-  /* PC download link */
-  .dl-link {
-    display: none; width: 100%; padding: 14px;
-    border-radius: var(--radius); background: rgba(52,211,153,0.12);
-    color: var(--success); border: 1px solid rgba(52,211,153,0.3);
-    font-size: 15px; font-weight: 600; text-align: center;
-    text-decoration: none; margin-bottom: 12px;
-  }
-  .dl-link.show { display: block; }
-
+  .share-btn { display: none; width: 100%; padding: 17px; border-radius: var(--radius); border: none; background: var(--success); color: #052e18; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
+  .share-btn.show { display: block; }
+  .share-btn:active { opacity: 0.85; transform: scale(0.97); }
+  .share-hint { display: none; font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 16px; line-height: 1.6; }
+  .share-hint.show { display: block; }
   .spacer { flex: 1; }
   .footer { text-align: center; font-size: 12px; color: var(--text-dim); padding-top: 16px; }
 </style>
 </head>
 <body>
 <div class="app">
-
   <div class="header">
     <div class="logo-row">
       <div class="logo-badge">SW</div>
@@ -152,7 +70,6 @@
 
   <p class="section-title">Chauffeur</p>
   <div class="drivers">
-
     <div class="driver-card" id="card-v" onclick="selectDriver('v')">
       <div class="check-circle">
         <svg class="checkmark" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -164,7 +81,6 @@
         <div class="driver-phone">07 66 05 01 56</div>
       </div>
     </div>
-
     <div class="driver-card" id="card-b" onclick="selectDriver('b')">
       <div class="check-circle">
         <svg class="checkmark" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -176,7 +92,6 @@
         <div class="driver-phone">06 33 55 50 41</div>
       </div>
     </div>
-
   </div>
 
   <p class="section-title">PDF à modifier</p>
@@ -188,33 +103,23 @@
   </div>
 
   <button class="btn" id="btn" disabled onclick="process()">Modifier le PDF</button>
-
   <div class="status" id="status"></div>
 
-  <!-- iOS : aperçu iframe -->
-  <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
-  <div class="pdf-hint" id="pdfHint">
-    Appuie sur le PDF ci-dessus → ↑ Partager<br>→ "Enregistrer dans Fichiers" ou envoie directement
-  </div>
-
-  <!-- PC : lien téléchargement -->
-  <a class="dl-link" id="dlLink" href="#" download="">⬇ Télécharger le PDF modifié</a>
+  <button class="share-btn" id="shareBtn" onclick="sharePDF()">📤 Partager le PDF</button>
+  <div class="share-hint" id="shareHint">Appuie pour envoyer sur WhatsApp, Mail, Fichiers…</div>
 
   <div class="spacer"></div>
   <div class="footer">Traitement 100 % local · aucune donnée envoyée</div>
-
 </div>
+
 <script>
 const DRIVERS = {
   v: { text: 'Vithurshan Balasubramaniam (0766050156)', prenom: 'Vithurshan' },
   b: { text: 'Banujan Balasubramaniam (0633555041)',    prenom: 'Banujan' }
 };
-const MOIS = {
-  jan:'01', fev:'02', mar:'03', avr:'04', mai:'05', jui:'06',
-  jul:'07', aou:'08', sep:'09', oct:'10', nov:'11', dec:'12'
-};
+const MOIS = { jan:'01',fev:'02',mar:'03',avr:'04',mai:'05',jui:'06',jul:'07',aou:'08',sep:'09',oct:'10',nov:'11',dec:'12' };
 
-let driver = null, file = null, lastURL = null;
+let driver = null, file = null, _bytes = null, _fname = null;
 
 function selectDriver(id) {
   driver = id;
@@ -239,10 +144,9 @@ function updateBtn() {
 
 function reset() {
   document.getElementById('status').className = 'status';
-  document.getElementById('pdfFrame').className = 'pdf-frame';
-  document.getElementById('pdfFrame').src = '';
-  document.getElementById('pdfHint').className = 'pdf-hint';
-  document.getElementById('dlLink').className = 'dl-link';
+  document.getElementById('shareBtn').className = 'share-btn';
+  document.getElementById('shareHint').className = 'share-hint';
+  _bytes = null; _fname = null;
 }
 
 function showStatus(type, msg) {
@@ -251,67 +155,51 @@ function showStatus(type, msg) {
   s.textContent = msg;
 }
 
-function buildFilename(arrayBuf, prenom) {
-  // Extraire les chaînes de texte du PDF binaire
-  const bytes = new Uint8Array(arrayBuf);
+function buildFilename(ab, prenom) {
+  const raw8 = new Uint8Array(ab);
   let raw = '';
-  for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
-
-  // Parser les strings entre parenthèses (format PDF)
+  for (let i = 0; i < raw8.length; i++) raw += String.fromCharCode(raw8[i]);
   let strings = [], cur = '', depth = 0;
-  for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '(' && raw[i-1] !== '\\') { depth++; if (depth === 1) cur = ''; }
+  for (let i = 1; i < raw.length; i++) {
+    if (raw[i] === '(' && raw[i-1] !== '\\') { depth++; if (depth===1) cur=''; }
     else if (raw[i] === ')' && raw[i-1] !== '\\' && depth > 0) {
-      depth--; if (depth === 0) { strings.push(cur); cur = ''; }
-      else cur += raw[i];
-    } else if (depth > 0) cur += raw[i];
+      depth--; if (depth===0 && cur.length>2 && cur.length<200) { strings.push(cur); cur=''; }
+      else if (depth>0) cur += raw[i];
+    } else if (depth>0) cur += raw[i];
   }
-  const allText = strings.join(' ');
-
-  // Date : "jeudi 9 avril 2026"
+  const txt = strings.join(' ');
   let datePart = '';
-  const dm = allText.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
+  const dm = txt.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
   if (dm) {
-    const jour = dm[2].padStart(2, '0');
-    const moisRaw = dm[3].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').slice(0, 3);
-    const mois = MOIS[moisRaw] || '??';
-    datePart = jour + '/' + mois + '/' + dm[4].slice(2);
+    const jour = dm[2].padStart(2,'0');
+    const moisRaw = dm[3].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,3);
+    datePart = jour + '/' + (MOIS[moisRaw]||'??') + '/' + dm[4].slice(2);
   }
-
-  // Heure prise en charge = 2ème HH:MM (le 1er est "18:48" création dossier)
   let heurePart = '';
-  const heures = [...allText.matchAll(/(\d{2}):(\d{2})/g)];
-  const valides = heures.filter(h => parseInt(h[1]) <= 23);
-  const idx = valides.length >= 2 ? 1 : 0;
-  if (valides.length > 0) heurePart = valides[idx][1] + 'h' + valides[idx][2];
-
-  if (datePart && heurePart) return datePart + ' - ' + heurePart + ' - ' + prenom + '.pdf';
-  return 'mission - ' + prenom + '.pdf';
+  const hs = [...txt.matchAll(/(\d{2}):(\d{2})/g)].filter(h => parseInt(h[1]) <= 23);
+  if (hs.length >= 2) heurePart = hs[1][1]+'h'+hs[1][2];
+  else if (hs.length === 1) heurePart = hs[0][1]+'h'+hs[0][2];
+  if (datePart && heurePart) return datePart+' - '+heurePart+' - '+prenom+'.pdf';
+  return 'mission - '+prenom+'.pdf';
 }
 
 async function sharePDF() {
+  if (!_bytes || !_fname) return;
   try {
-    const bytes = window._pdfBytes;
-    const fname = window._pdfFname;
-    if (!bytes || !fname) return;
-
-    // Créer un File object pour Web Share API
-    const blob = new Blob([bytes], { type: 'application/pdf' });
-    const pdfFile = new File([blob], fname, { type: 'application/pdf' });
-
+    const blob = new Blob([_bytes], { type: 'application/pdf' });
+    const pdfFile = new File([blob], _fname, { type: 'application/pdf' });
     if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-      await navigator.share({
-        files: [pdfFile],
-        title: fname,
-      });
+      await navigator.share({ files: [pdfFile], title: _fname });
     } else {
-      // Fallback : ouvrir base64
-      window.open(window._pdfB64, '_blank');
+      let bin = '';
+      for (let i = 0; i < _bytes.length; i++) bin += String.fromCharCode(_bytes[i]);
+      const b64 = 'data:application/pdf;base64,' + btoa(bin);
+      const a = document.createElement('a');
+      a.href = b64; a.download = _fname;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
   } catch(e) {
-    if (e.name !== 'AbortError') {
-      showStatus('err', 'Erreur partage : ' + e.message);
-    }
+    if (e.name !== 'AbortError') showStatus('err', 'Erreur : ' + e.message);
   }
 }
 
@@ -320,7 +208,6 @@ async function process() {
   const btn = document.getElementById('btn');
   btn.disabled = true; btn.textContent = 'Traitement…';
   reset();
-
   try {
     const { PDFDocument, rgb, StandardFonts } = PDFLib;
     const ab = await file.arrayBuffer();
@@ -328,32 +215,14 @@ async function process() {
     const page = pdfDoc.getPages()[0];
     const { height } = page.getSize();
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    // Couvrir ancien nom chauffeur + écrire nouveau
-    page.drawRectangle({ x: 349, y: height - 199.5, width: 230, height: 13.5, color: rgb(1,1,1) });
-    page.drawText(DRIVERS[driver].text, { x: 349, y: height - 198, size: 10.5, font, color: rgb(0,0,0) });
-
-    const bytes = await pdfDoc.save();
-    const blob = new Blob([bytes], { type: 'application/pdf' });
-    if (lastURL) URL.revokeObjectURL(lastURL);
-    lastURL = URL.createObjectURL(blob);
-
-    const fname = buildFilename(ab, DRIVERS[driver].prenom);
-    showStatus('ok', '✓ ' + fname);
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      const frame = document.getElementById('pdfFrame');
-      frame.src = lastURL;
-      frame.className = 'pdf-frame show';
-      document.getElementById('pdfHint').className = 'pdf-hint show';
-    } else {
-      const a = document.getElementById('dlLink');
-      a.href = lastURL;
-      a.download = fname;
-      a.className = 'dl-link show';
-    }
-
+    page.drawRectangle({ x:349, y:height-199.5, width:230, height:13.5, color:rgb(1,1,1) });
+    page.drawText(DRIVERS[driver].text, { x:349, y:height-198, size:10.5, font, color:rgb(0,0,0) });
+    _bytes = await pdfDoc.save();
+    _fname = buildFilename(ab, DRIVERS[driver].prenom);
+    showStatus('ok', '✓ ' + _fname);
+    document.getElementById('shareBtn').className = 'share-btn show';
+    document.getElementById('shareHint').className = 'share-hint show';
+    if (!/iPad|iPhone|iPod/.test(navigator.userAgent)) sharePDF();
   } catch(e) {
     showStatus('err', 'Erreur : ' + e.message);
   } finally {
