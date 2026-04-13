@@ -6,8 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Samway">
-<title>Samway — Chauffeur v2</title>
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<title>Samway — Chauffeur</title>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0f;
@@ -112,13 +112,14 @@
   .status.ok { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
   .status.err { background: rgba(248,113,113,0.12); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
 
-  /* PDF preview iframe */
-  .pdf-frame {
-    display: none; width: 100%; height: 65vh;
-    border-radius: var(--radius); border: 1.5px solid var(--success);
-    background: white; margin-bottom: 8px;
+  /* iOS open button */
+  .ios-btn {
+    display: none; width: 100%; padding: 17px;
+    border-radius: var(--radius); background: var(--success);
+    color: #052e18; font-size: 16px; font-weight: 700;
+    text-align: center; text-decoration: none; margin-bottom: 8px;
   }
-  .pdf-frame.show { display: block; }
+  .ios-btn.show { display: block; }
   .pdf-hint {
     display: none; font-size: 12px; color: var(--text-muted);
     text-align: center; margin-bottom: 16px; line-height: 1.6;
@@ -191,10 +192,10 @@
 
   <div class="status" id="status"></div>
 
-  <!-- iOS : aperçu iframe -->
-  <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
+  <!-- iOS : bouton ouvrir -->
+  <a class="ios-btn" id="iosBtn" href="#" target="_blank">📂 Ouvrir le PDF modifié</a>
   <div class="pdf-hint" id="pdfHint">
-    Appuie sur le PDF ci-dessus → ↑ Partager<br>→ "Enregistrer dans Fichiers" ou envoie directement
+    Appuie sur le bouton vert → ↑ Partager<br>→ "Enregistrer dans Fichiers" ou envoie directement
   </div>
 
   <!-- PC : lien téléchargement -->
@@ -239,8 +240,8 @@ function updateBtn() {
 
 function reset() {
   document.getElementById('status').className = 'status';
-  document.getElementById('pdfFrame').className = 'pdf-frame';
-  document.getElementById('pdfFrame').src = '';
+  document.getElementById('iosBtn').className = 'ios-btn';
+  document.getElementById('iosBtn').href = '#';
   document.getElementById('pdfHint').className = 'pdf-hint';
   document.getElementById('dlLink').className = 'dl-link';
 }
@@ -259,14 +260,16 @@ function buildFilename(arrayBuf, prenom) {
 
   // Parser les strings entre parenthèses (format PDF)
   let strings = [], cur = '', depth = 0;
-  for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '(' && raw[i-1] !== '\\') { depth++; if (depth === 1) cur = ''; }
-    else if (raw[i] === ')' && raw[i-1] !== '\\' && depth > 0) {
-      depth--; if (depth === 0) { strings.push(cur); cur = ''; }
+  for (let i = 1; i < raw.length; i++) {
+    const prev = raw[i-1];
+    if (raw[i] === '(' && prev !== '\\') { depth++; if (depth === 1) cur = ''; }
+    else if (raw[i] === ')' && prev !== '\\' && depth > 0) {
+      depth--; if (depth === 0) { if (cur.length > 2 && cur.length < 200) strings.push(cur); cur = ''; }
       else cur += raw[i];
     } else if (depth > 0) cur += raw[i];
   }
-  const allText = strings.join(' ');
+  // Aussi chercher directement le pattern date dans le raw sans parser
+  const allText = strings.join(' ') + ' ' + raw;
 
   // Date : "jeudi 9 avril 2026"
   let datePart = '';
@@ -317,9 +320,9 @@ async function process() {
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     if (isIOS) {
-      const frame = document.getElementById('pdfFrame');
-      frame.src = lastURL;
-      frame.className = 'pdf-frame show';
+      const btn = document.getElementById('iosBtn');
+      btn.href = lastURL;
+      btn.className = 'ios-btn show';
       document.getElementById('pdfHint').className = 'pdf-hint show';
     } else {
       const a = document.getElementById('dlLink');
