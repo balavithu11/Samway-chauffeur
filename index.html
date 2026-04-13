@@ -6,8 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Samway">
-<title>Samway — Chauffeur</title>
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<title>Samway — Chauffeur v4</title>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <style>
   :root {
     --bg: #0a0a0f;
@@ -15,7 +15,6 @@
     --border: rgba(255,255,255,0.08);
     --border-active: rgba(255,255,255,0.22);
     --accent: #4f8ef7;
-    --accent-dim: rgba(79,142,247,0.15);
     --text: #f0f0f5;
     --text-muted: #7a7a8c;
     --text-dim: #4a4a5c;
@@ -44,25 +43,20 @@
   }
   .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
   .logo-sub { font-size: 13px; color: var(--text-muted); margin-left: 46px; }
-
   .section-title {
     font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px;
   }
-
-  /* Driver cards */
   .drivers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
   .driver-card {
     display: flex; align-items: center; gap: 14px; padding: 16px;
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: var(--radius); cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
-    position: relative; overflow: hidden;
     -webkit-user-select: none; user-select: none;
   }
   .driver-card.selected { border-color: var(--accent); background: rgba(79,142,247,0.1); }
-  .driver-card:active { opacity: 0.8; }
-
+  .driver-card:active { opacity: 0.7; }
   .check-circle {
     width: 22px; height: 22px; border-radius: 50%;
     border: 1.5px solid var(--border-active); background: transparent;
@@ -72,17 +66,13 @@
   .driver-card.selected .check-circle { border-color: var(--accent); background: var(--accent); }
   .checkmark { display: none; }
   .driver-card.selected .checkmark { display: block; }
-
   .driver-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
   .driver-phone { font-size: 13px; color: var(--text-muted); }
-
-  /* File zone */
   .file-zone {
     position: relative; border: 1.5px dashed var(--border-active);
     border-radius: var(--radius); padding: 28px 20px;
     text-align: center; background: var(--surface);
     cursor: pointer; margin-bottom: 14px;
-    transition: border-color 0.15s;
   }
   .file-zone.ok { border-color: var(--success); border-style: solid; }
   .file-zone input {
@@ -92,8 +82,6 @@
   .file-icon { font-size: 30px; margin-bottom: 8px; line-height: 1; display: block; }
   .file-main { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .file-hint { font-size: 13px; color: var(--text-muted); }
-
-  /* Button */
   .btn {
     width: 100%; padding: 17px; border-radius: var(--radius); border: none;
     font-size: 16px; font-weight: 600; cursor: pointer;
@@ -102,39 +90,26 @@
   }
   .btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn:not(:disabled):active { transform: scale(0.97); }
-
-  /* Status */
   .status {
     padding: 12px 14px; border-radius: var(--radius-sm);
     font-size: 14px; font-weight: 500; margin-bottom: 12px; display: none;
   }
   .status.show { display: block; }
-  .status.ok { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
-  .status.err { background: rgba(248,113,113,0.12); color: var(--error); border: 1px solid rgba(248,113,113,0.25); }
-
-  /* PDF preview iframe */
-  .pdf-frame {
-    display: none; width: 100%; height: 65vh;
-    border-radius: var(--radius); border: 1.5px solid var(--success);
-    background: white; margin-bottom: 8px;
+  .status.ok  { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+  .status.err { background: rgba(248,113,113,0.12); color: var(--error);   border: 1px solid rgba(248,113,113,0.25); }
+  /* Bouton téléchargement — fonctionne iOS + PC */
+  .dl-btn {
+    display: none; width: 100%; padding: 17px;
+    border-radius: var(--radius); background: var(--success);
+    color: #052e18; font-size: 16px; font-weight: 700;
+    text-align: center; text-decoration: none; margin-bottom: 8px;
   }
-  .pdf-frame.show { display: block; }
-  .pdf-hint {
+  .dl-btn.show { display: block; }
+  .dl-hint {
     display: none; font-size: 12px; color: var(--text-muted);
     text-align: center; margin-bottom: 16px; line-height: 1.6;
   }
-  .pdf-hint.show { display: block; }
-
-  /* PC download link */
-  .dl-link {
-    display: none; width: 100%; padding: 14px;
-    border-radius: var(--radius); background: rgba(52,211,153,0.12);
-    color: var(--success); border: 1px solid rgba(52,211,153,0.3);
-    font-size: 15px; font-weight: 600; text-align: center;
-    text-decoration: none; margin-bottom: 12px;
-  }
-  .dl-link.show { display: block; }
-
+  .dl-hint.show { display: block; }
   .spacer { flex: 1; }
   .footer { text-align: center; font-size: 12px; color: var(--text-dim); padding-top: 16px; }
 </style>
@@ -191,14 +166,11 @@
 
   <div class="status" id="status"></div>
 
-  <!-- iOS : aperçu iframe -->
-  <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
-  <div class="pdf-hint" id="pdfHint">
-    Appuie sur le PDF ci-dessus → ↑ Partager<br>→ "Enregistrer dans Fichiers" ou envoie directement
+  <a class="dl-btn" id="dlBtn" href="#" download="mission.pdf">📂 Ouvrir / Télécharger le PDF</a>
+  <div class="dl-hint" id="dlHint">
+    iOS : appuie sur le bouton vert → ↑ Partager → Enregistrer dans Fichiers<br>
+    PC : le PDF se télécharge automatiquement
   </div>
-
-  <!-- PC : lien téléchargement -->
-  <a class="dl-link" id="dlLink" href="#" download="">⬇ Télécharger le PDF modifié</a>
 
   <div class="spacer"></div>
   <div class="footer">Traitement 100 % local · aucune donnée envoyée</div>
@@ -214,7 +186,7 @@ const MOIS = {
   jul:'07', aou:'08', sep:'09', oct:'10', nov:'11', dec:'12'
 };
 
-let driver = null, file = null, lastURL = null;
+let driver = null, file = null;
 
 function selectDriver(id) {
   driver = id;
@@ -239,10 +211,9 @@ function updateBtn() {
 
 function reset() {
   document.getElementById('status').className = 'status';
-  document.getElementById('pdfFrame').className = 'pdf-frame';
-  document.getElementById('pdfFrame').src = '';
-  document.getElementById('pdfHint').className = 'pdf-hint';
-  document.getElementById('dlLink').className = 'dl-link';
+  document.getElementById('dlBtn').className = 'dl-btn';
+  document.getElementById('dlBtn').href = '#';
+  document.getElementById('dlHint').className = 'dl-hint';
 }
 
 function showStatus(type, msg) {
@@ -251,24 +222,26 @@ function showStatus(type, msg) {
   s.textContent = msg;
 }
 
-function buildFilename(arrayBuf, prenom) {
-  // Extraire les chaînes de texte du PDF binaire
-  const bytes = new Uint8Array(arrayBuf);
+function buildFilename(rawBytes, prenom) {
+  // Convertir en string pour parser
   let raw = '';
-  for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < rawBytes.length; i++) raw += String.fromCharCode(rawBytes[i]);
 
-  // Parser les strings entre parenthèses (format PDF)
+  // Extraire strings PDF entre parenthèses
   let strings = [], cur = '', depth = 0;
-  for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '(' && raw[i-1] !== '\\') { depth++; if (depth === 1) cur = ''; }
-    else if (raw[i] === ')' && raw[i-1] !== '\\' && depth > 0) {
-      depth--; if (depth === 0) { strings.push(cur); cur = ''; }
-      else cur += raw[i];
+  for (let i = 1; i < raw.length; i++) {
+    if (raw[i] === '(' && raw[i-1] !== '\\') {
+      depth++;
+      if (depth === 1) cur = '';
+    } else if (raw[i] === ')' && raw[i-1] !== '\\' && depth > 0) {
+      depth--;
+      if (depth === 0 && cur.length > 2 && cur.length < 200) { strings.push(cur); cur = ''; }
+      else if (depth > 0) cur += raw[i];
     } else if (depth > 0) cur += raw[i];
   }
   const allText = strings.join(' ');
 
-  // Date : "jeudi 9 avril 2026"
+  // Chercher date : "jeudi 9 avril 2026"
   let datePart = '';
   const dm = allText.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+(\d{1,2})\s+(\w+)\s+(\d{4})/i);
   if (dm) {
@@ -278,12 +251,12 @@ function buildFilename(arrayBuf, prenom) {
     datePart = jour + '/' + mois + '/' + dm[4].slice(2);
   }
 
-  // Heure prise en charge = 2ème HH:MM (le 1er est "18:48" création dossier)
+  // Heure prise en charge = 2ème HH:MM (1er = "18:48" création dossier)
   let heurePart = '';
   const heures = [...allText.matchAll(/(\d{2}):(\d{2})/g)];
   const valides = heures.filter(h => parseInt(h[1]) <= 23);
-  const idx = valides.length >= 2 ? 1 : 0;
-  if (valides.length > 0) heurePart = valides[idx][1] + 'h' + valides[idx][2];
+  if (valides.length >= 2) heurePart = valides[1][1] + 'h' + valides[1][2];
+  else if (valides.length === 1) heurePart = valides[0][1] + 'h' + valides[0][2];
 
   if (datePart && heurePart) return datePart + ' - ' + heurePart + ' - ' + prenom + '.pdf';
   return 'mission - ' + prenom + '.pdf';
@@ -298,36 +271,40 @@ async function process() {
   try {
     const { PDFDocument, rgb, StandardFonts } = PDFLib;
     const ab = await file.arrayBuffer();
+    const rawBytes = new Uint8Array(ab);
+
     const pdfDoc = await PDFDocument.load(ab);
     const page = pdfDoc.getPages()[0];
     const { height } = page.getSize();
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Couvrir ancien nom chauffeur + écrire nouveau
+    // Remplacer le chauffeur
     page.drawRectangle({ x: 349, y: height - 199.5, width: 230, height: 13.5, color: rgb(1,1,1) });
     page.drawText(DRIVERS[driver].text, { x: 349, y: height - 198, size: 10.5, font, color: rgb(0,0,0) });
 
     const bytes = await pdfDoc.save();
-    const fname = buildFilename(ab, DRIVERS[driver].prenom);
-    showStatus('ok', '✓ ' + fname);
+    const fname = buildFilename(rawBytes, DRIVERS[driver].prenom);
 
-    // Base64 — seule méthode fiable iOS Safari
+    // Convertir en base64 — seule méthode fiable sur iOS Safari
     let binary = '';
     for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
     const b64 = 'data:application/pdf;base64,' + btoa(binary);
 
+    // Mettre à jour le lien
+    const dlBtn = document.getElementById('dlBtn');
+    dlBtn.href = b64;
+    dlBtn.download = fname;
+    dlBtn.className = 'dl-btn show';
+    document.getElementById('dlHint').className = 'dl-hint show';
+
+    showStatus('ok', '✓ ' + fname);
+
+    // Sur PC : déclencher aussi le téléchargement automatique
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      const btn = document.getElementById('iosBtn');
-      btn.href = b64;
-      btn.download = fname;
-      btn.className = 'ios-btn show';
-      document.getElementById('pdfHint').className = 'pdf-hint show';
-    } else {
-      const a = document.getElementById('dlLink');
-      a.href = b64;
-      a.download = fname;
-      a.className = 'dl-link show';
+    if (!isIOS) {
+      const a = document.createElement('a');
+      a.href = b64; a.download = fname;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
 
   } catch(e) {
